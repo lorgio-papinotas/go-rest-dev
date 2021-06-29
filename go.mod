@@ -15,3 +15,5 @@ replace github.com/lorgioedtech/go-rest-dev/internal/storage/memory => ./interna
 replace github.com/lorgioedtech/go-rest-dev/internal/storage/json => ./internal/storage/json
 
 replace github.com/lorgioedtech/go-rest-dev/internal/listing => ./internal/listing
+
+replace github.com/lorgioedtech/go-rest-dev/internal/adding => ./internal/adding
