@@ -33,7 +33,7 @@ func main() {
 
 	switch storageType {
 	case Memory:
-		log.Fatal("Not implemented")
+		log.Fatal("Not implemented yet")
 
 	case JSON:
 		// error handling omitted for simplicity
