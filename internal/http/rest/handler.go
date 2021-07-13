@@ -8,20 +8,22 @@ import (
 	"github.com/lorgioedtech/go-rest-dev/internal/adding"
 	"github.com/lorgioedtech/go-rest-dev/internal/entity"
 	"github.com/lorgioedtech/go-rest-dev/internal/listing"
+	"github.com/lorgioedtech/go-rest-dev/pkg/log"
 )
 
-func Handler(adding adding.Service, listing listing.Service) http.Handler {
+func Handler(logger log.Logger, adding adding.Service, listing listing.Service) http.Handler {
 	router := httprouter.New()
 
-	router.GET("/institutions", getInstitutions(listing))
-	router.GET("/institutions/:id", getInstitution(listing))
-	router.POST("/institutions", AddInstitution(adding))
+	router.GET("/institutions", getInstitutions(logger, listing))
+	router.GET("/institutions/:id", getInstitution(logger, listing))
+	router.POST("/institutions", AddInstitution(logger, adding))
 	return router
 }
 
 // AddInstitution returns a handler for POST /institutions requests
-func AddInstitution(s adding.Service) func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func AddInstitution(logger log.Logger, s adding.Service) func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		logger.Infof("Add Institution with request %v", r.Body)
 		decoder := json.NewDecoder(r.Body)
 
 		var newInstitution entity.Institution
@@ -40,8 +42,9 @@ func AddInstitution(s adding.Service) func(w http.ResponseWriter, r *http.Reques
 }
 
 // getInstitutions returns a handler for GET /institutions requests
-func getInstitutions(s listing.Service) func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func getInstitutions(logger log.Logger, s listing.Service) func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		logger.Infof("Add Institution with request %v", r.Body)
 		w.Header().Set("Content-Type", "application/json")
 		list := s.GetInstitutions()
 		json.NewEncoder(w).Encode(list)
@@ -49,7 +52,7 @@ func getInstitutions(s listing.Service) func(w http.ResponseWriter, r *http.Requ
 }
 
 // getInstitution returns a handler for GET /institutions/:id requests
-func getInstitution(s listing.Service) func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func getInstitution(logger log.Logger, s listing.Service) func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		institution, err := s.GetInstitution(p.ByName("id"))
 		if err == listing.ErrNotFound {
